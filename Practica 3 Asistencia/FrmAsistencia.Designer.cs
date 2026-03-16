@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             dtpFecha = new DateTimePicker();
             dgvAsistencia = new DataGridView();
+            cmsEliminar = new ContextMenuStrip(components);
+            eliminarToolStripMenuItem = new ToolStripMenuItem();
             label1 = new Label();
             label2 = new Label();
             txtNumControl = new TextBox();
@@ -37,6 +40,7 @@
             cmbGrupo = new ComboBox();
             GRUPO = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvAsistencia).BeginInit();
+            cmsEliminar.SuspendLayout();
             SuspendLayout();
             // 
             // dtpFecha
@@ -50,12 +54,29 @@
             // dgvAsistencia
             // 
             dgvAsistencia.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAsistencia.Location = new Point(12, 240);
+            dgvAsistencia.ContextMenuStrip = cmsEliminar;
+            dgvAsistencia.Location = new Point(12, 241);
             dgvAsistencia.Name = "dgvAsistencia";
             dgvAsistencia.RowHeadersWidth = 62;
             dgvAsistencia.Size = new Size(855, 225);
             dgvAsistencia.TabIndex = 1;
             dgvAsistencia.CellContentClick += dgvAsistencia_CellContentClick;
+            dgvAsistencia.CellValueChanged += dgvAsistencia_CellValueChanged;
+            dgvAsistencia.CurrentCellDirtyStateChanged += dgvAsistencia_CurrentCellDirtyStateChanged;
+            // 
+            // cmsEliminar
+            // 
+            cmsEliminar.ImageScalingSize = new Size(24, 24);
+            cmsEliminar.Items.AddRange(new ToolStripItem[] { eliminarToolStripMenuItem });
+            cmsEliminar.Name = "cmsEliminar";
+            cmsEliminar.Size = new Size(147, 36);
+            // 
+            // eliminarToolStripMenuItem
+            // 
+            eliminarToolStripMenuItem.Name = "eliminarToolStripMenuItem";
+            eliminarToolStripMenuItem.Size = new Size(146, 32);
+            eliminarToolStripMenuItem.Text = "Eliminar";
+            eliminarToolStripMenuItem.Click += eliminarToolStripMenuItem_Click;
             // 
             // label1
             // 
@@ -131,6 +152,7 @@
             Text = "Asistencia";
             Load += FrmAsistencia_Load;
             ((System.ComponentModel.ISupportInitialize)dgvAsistencia).EndInit();
+            cmsEliminar.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -145,5 +167,7 @@
         private Button btnBuscar;
         private ComboBox cmbGrupo;
         private Label GRUPO;
+        private ContextMenuStrip cmsEliminar;
+        private ToolStripMenuItem eliminarToolStripMenuItem;
     }
 }
