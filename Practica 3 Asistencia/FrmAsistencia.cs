@@ -51,11 +51,12 @@ namespace Practica_3_Asistencia
         }
         private void txtNumControl_TextChanged(object sender, EventArgs e)
         {
-
+            
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
+
             string fecha = dtpFecha.Value.ToString("yyyy-MM-dd");
             string nc = txtNumControl.Text.Trim();
 
@@ -66,7 +67,11 @@ namespace Practica_3_Asistencia
                 $"LEFT JOIN asistencia a ON e.num_control = a.num_control " +
                 $"AND a.fecha = '{fecha}' " +
                 $"WHERE e.num_control = '{nc}'");
-
+            if (nc == "")
+            {
+                cargarEstudiantes();
+                return;
+            }
             if (ds != null && ds.Tables.Count > 0)
             {
                 dgvAsistencia.DataSource = ds.Tables[0];
@@ -102,7 +107,8 @@ namespace Practica_3_Asistencia
                 dgvAsistencia.Columns.Insert(index, chk);
             }
         }
-
+      
+       
         private void FrmAsistencia_Load(object sender, EventArgs e)
         {
             cmbGrupo.Items.Add("A");
@@ -113,9 +119,33 @@ namespace Practica_3_Asistencia
 
             cargarEstudiantes();
             dgvAsistencia.CellDoubleClick += dgvAsistencia_CellDoubleClick;
-
+            this.KeyPreview = true;
+            this.KeyPress += FrmAsistencia_KeyPress;
         }
+        private string buffer = "";
 
+        private void FrmAsistencia_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsDigit(e.KeyChar)) // solo números
+            {
+                buffer += e.KeyChar;
+            }
+
+            if (e.KeyChar == (char)Keys.Enter) // cuando termina el escaneo
+            {
+                txtNumControl.Text = buffer;
+                buffer = "";
+
+                btnBuscar.PerformClick();
+            }
+        }
+        private void txtNumControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnBuscar.PerformClick(); 
+            }
+        }
         private void eliminarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string nc = dgvAsistencia.CurrentRow.Cells["num_control"].Value.ToString();

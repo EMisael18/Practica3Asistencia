@@ -46,6 +46,7 @@ namespace Practica_3_Asistencia
         {
             if (editar == false)
             {
+                // INSERTAR NUEVO
                 bool f = datos.ejecutarcomando(
                     $"INSERT INTO estudiantes (num_control,nombre,ap_paterno,ap_materno,grupo) " +
                     $"VALUES ('{txtNumControl.Text}','{txtNombre.Text}','{txtPaterno.Text}','{txtMaterno.Text}','{cmbGrupo.Text}')");
@@ -55,23 +56,45 @@ namespace Practica_3_Asistencia
                     MessageBox.Show("Alumno agregado");
                     this.Close();
                 }
+                else
+                {
+                    MessageBox.Show("Error al agregar");
+                }
             }
             else
             {
-                bool f = datos.ejecutarcomando(
+                // 🔴 VALIDAR QUE NO EXISTA OTRO IGUAL
+                DataSet ds = datos.ejecutar(
+                    $"SELECT * FROM estudiantes WHERE num_control='{txtNumControl.Text}'");
+
+                if (ds.Tables[0].Rows.Count > 0 && txtNumControl.Text != numControlOriginal)
+                {
+                    MessageBox.Show("Ese número de control ya existe");
+                    return;
+                }
+
+                // 🔥 ACTUALIZAR ESTUDIANTE (incluye num_control)
+                bool f1 = datos.ejecutarcomando(
                     $"UPDATE estudiantes SET " +
+                    $"num_control='{txtNumControl.Text}', " +
                     $"nombre='{txtNombre.Text}', " +
                     $"ap_paterno='{txtPaterno.Text}', " +
                     $"ap_materno='{txtMaterno.Text}', " +
                     $"grupo='{cmbGrupo.Text}' " +
                     $"WHERE num_control='{numControlOriginal}'");
 
-                if (f)
+                
+
+                if (f1)
                 {
-                    MessageBox.Show("Alumno actualizado");
+                    MessageBox.Show("Alumno actualizado correctamente");
                     this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Error al actualizar");
                 }
             }
         }
-    }
+        }
 }
