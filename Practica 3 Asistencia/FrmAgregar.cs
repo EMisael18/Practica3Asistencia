@@ -11,12 +11,28 @@ namespace Practica_3_Asistencia
 {
     public partial class FrmAgregar : Form
     {
+        
+        bool editar = false;
+        string numControlOriginal = "";
         Datos datos = new Datos();
         public FrmAgregar()
         {
             InitializeComponent();
         }
+        public FrmAgregar(string nc, string nombre, string paterno, string materno, string grupo)
+        {
+            InitializeComponent();
 
+            txtNumControl.Text = nc;
+            txtNombre.Text = nombre;
+            txtPaterno.Text = paterno;
+            txtMaterno.Text = materno;
+            cmbGrupo.Text = grupo;
+
+
+            editar = true;
+            numControlOriginal = nc;
+        }
         private void FrmAgregar_Load(object sender, EventArgs e)
         {
             cmbGrupo.Items.Add("A");
@@ -28,18 +44,33 @@ namespace Practica_3_Asistencia
 
         private void Agregar_Click(object sender, EventArgs e)
         {
-            bool resultado = datos.ejecutarcomando(
-               $"INSERT INTO estudiantes (num_control,nombre,ap_paterno,ap_materno,grupo) " +
-               $"VALUES ('{txtNumControl.Text}','{txtNombre.Text}','{txtPaterno.Text}','{txtMaterno.Text}','{cmbGrupo.Text}')");
-
-            if (resultado)
+            if (editar == false)
             {
-                MessageBox.Show("Estudiante agregado correctamente");
-                this.Close();
+                bool f = datos.ejecutarcomando(
+                    $"INSERT INTO estudiantes (num_control,nombre,ap_paterno,ap_materno,grupo) " +
+                    $"VALUES ('{txtNumControl.Text}','{txtNombre.Text}','{txtPaterno.Text}','{txtMaterno.Text}','{cmbGrupo.Text}')");
+
+                if (f)
+                {
+                    MessageBox.Show("Alumno agregado");
+                    this.Close();
+                }
             }
             else
             {
-                MessageBox.Show("Error al agregar estudiante");
+                bool f = datos.ejecutarcomando(
+                    $"UPDATE estudiantes SET " +
+                    $"nombre='{txtNombre.Text}', " +
+                    $"ap_paterno='{txtPaterno.Text}', " +
+                    $"ap_materno='{txtMaterno.Text}', " +
+                    $"grupo='{cmbGrupo.Text}' " +
+                    $"WHERE num_control='{numControlOriginal}'");
+
+                if (f)
+                {
+                    MessageBox.Show("Alumno actualizado");
+                    this.Close();
+                }
             }
         }
     }

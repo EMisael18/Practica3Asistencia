@@ -39,13 +39,14 @@
             btnBuscar = new Button();
             cmbGrupo = new ComboBox();
             GRUPO = new Label();
+            btnGuardar = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvAsistencia).BeginInit();
             cmsEliminar.SuspendLayout();
             SuspendLayout();
             // 
             // dtpFecha
             // 
-            dtpFecha.Location = new Point(62, 65);
+            dtpFecha.Location = new Point(209, 56);
             dtpFecha.Name = "dtpFecha";
             dtpFecha.Size = new Size(300, 31);
             dtpFecha.TabIndex = 0;
@@ -55,10 +56,10 @@
             // 
             dgvAsistencia.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAsistencia.ContextMenuStrip = cmsEliminar;
-            dgvAsistencia.Location = new Point(12, 241);
+            dgvAsistencia.Location = new Point(12, 288);
             dgvAsistencia.Name = "dgvAsistencia";
             dgvAsistencia.RowHeadersWidth = 62;
-            dgvAsistencia.Size = new Size(855, 225);
+            dgvAsistencia.Size = new Size(1042, 225);
             dgvAsistencia.TabIndex = 1;
             dgvAsistencia.CellContentClick += dgvAsistencia_CellContentClick;
             dgvAsistencia.CellValueChanged += dgvAsistencia_CellValueChanged;
@@ -82,7 +83,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Black", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(171, 34);
+            label1.Location = new Point(318, 25);
             label1.Name = "label1";
             label1.Size = new Size(78, 28);
             label1.TabIndex = 2;
@@ -92,7 +93,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Black", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(363, 117);
+            label2.Location = new Point(510, 108);
             label2.Name = "label2";
             label2.Size = new Size(141, 28);
             label2.TabIndex = 3;
@@ -100,7 +101,7 @@
             // 
             // txtNumControl
             // 
-            txtNumControl.Location = new Point(260, 161);
+            txtNumControl.Location = new Point(407, 152);
             txtNumControl.Name = "txtNumControl";
             txtNumControl.Size = new Size(300, 31);
             txtNumControl.TabIndex = 4;
@@ -108,7 +109,7 @@
             // 
             // btnBuscar
             // 
-            btnBuscar.Location = new Point(608, 158);
+            btnBuscar.Location = new Point(750, 149);
             btnBuscar.Name = "btnBuscar";
             btnBuscar.Size = new Size(112, 34);
             btnBuscar.TabIndex = 5;
@@ -119,7 +120,7 @@
             // cmbGrupo
             // 
             cmbGrupo.FormattingEnabled = true;
-            cmbGrupo.Location = new Point(562, 63);
+            cmbGrupo.Location = new Point(709, 54);
             cmbGrupo.Name = "cmbGrupo";
             cmbGrupo.Size = new Size(182, 33);
             cmbGrupo.TabIndex = 6;
@@ -129,17 +130,28 @@
             // 
             GRUPO.AutoSize = true;
             GRUPO.Font = new Font("Segoe UI Black", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            GRUPO.Location = new Point(615, 34);
+            GRUPO.Location = new Point(762, 25);
             GRUPO.Name = "GRUPO";
             GRUPO.Size = new Size(84, 28);
             GRUPO.TabIndex = 7;
             GRUPO.Text = "GRUPO";
             // 
+            // btnGuardar
+            // 
+            btnGuardar.Location = new Point(455, 219);
+            btnGuardar.Name = "btnGuardar";
+            btnGuardar.Size = new Size(242, 34);
+            btnGuardar.TabIndex = 8;
+            btnGuardar.Text = "GUARDAR CAMBIOS";
+            btnGuardar.UseVisualStyleBackColor = true;
+            btnGuardar.Click += btnGuardar_Click;
+            // 
             // FrmAsistencia
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(868, 477);
+            ClientSize = new Size(1168, 543);
+            Controls.Add(btnGuardar);
             Controls.Add(GRUPO);
             Controls.Add(cmbGrupo);
             Controls.Add(btnBuscar);
@@ -169,5 +181,6 @@
         private Label GRUPO;
         private ContextMenuStrip cmsEliminar;
         private ToolStripMenuItem eliminarToolStripMenuItem;
+        private Button btnGuardar;
     }
 }

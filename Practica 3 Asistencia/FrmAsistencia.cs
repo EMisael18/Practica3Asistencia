@@ -1,5 +1,6 @@
 using System.Data;
 using winMySQL.Clases;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace Practica_3_Asistencia
 {
@@ -15,27 +16,26 @@ namespace Practica_3_Asistencia
             string fecha = dtpFecha.Value.ToString("yyyy-MM-dd");
 
             DataSet ds = datos.ejecutar(
-                $"SELECT e.num_control, e.nombre, e.ap_paterno, e.grupo, " +
+                $"SELECT e.num_control, e.nombre, e.ap_paterno, e.ap_materno, e.grupo, " +
                 $"IFNULL(a.asistio,0) AS asistio " +
                 $"FROM estudiantes e " +
                 $"LEFT JOIN asistencia a ON e.num_control = a.num_control " +
-                $"AND a.fecha = '{fecha}'");
+                $"AND a.fecha = '{fecha}' " +
+                $"WHERE e.grupo = '{cmbGrupo.Text}'");
 
-            if (ds != null && ds.Tables.Count > 0)
+            dgvAsistencia.DataSource = ds.Tables[0];
+
+            if (dgvAsistencia.Columns.Contains("asistio"))
             {
-                dgvAsistencia.DataSource = ds.Tables[0];
-                if (dgvAsistencia.Columns.Contains("asistio"))
-                {
-                    int index = dgvAsistencia.Columns["asistio"].Index;
-                    dgvAsistencia.Columns.Remove("asistio");
+                int index = dgvAsistencia.Columns["asistio"].Index;
+                dgvAsistencia.Columns.Remove("asistio");
 
-                    DataGridViewCheckBoxColumn chk = new DataGridViewCheckBoxColumn();
-                    chk.Name = "asistio";
-                    chk.HeaderText = "asistio";
-                    chk.DataPropertyName = "asistio";
+                DataGridViewCheckBoxColumn chk = new DataGridViewCheckBoxColumn();
+                chk.Name = "asistio";
+                chk.HeaderText = "asistio";
+                chk.DataPropertyName = "asistio";
 
-                    dgvAsistencia.Columns.Insert(index, chk);
-                }
+                dgvAsistencia.Columns.Insert(index, chk);
             }
 
         }
@@ -60,7 +60,7 @@ namespace Practica_3_Asistencia
             string nc = txtNumControl.Text.Trim();
 
             DataSet ds = datos.ejecutar(
-                $"SELECT e.num_control, e.nombre, e.ap_paterno, e.grupo, " +
+                $"SELECT e.num_control, e.nombre, e.ap_paterno, e.ap_materno, e.grupo, " +
                 $"IFNULL(a.asistio,0) AS asistio " +
                 $"FROM estudiantes e " +
                 $"LEFT JOIN asistencia a ON e.num_control = a.num_control " +
@@ -81,7 +81,7 @@ namespace Practica_3_Asistencia
         void cargarEstudiantes()
         {
             DataSet ds = datos.ejecutar(
-                $"SELECT e.num_control, e.nombre, e.ap_paterno, e.grupo, " +
+                $"SELECT e.num_control, e.nombre, e.ap_paterno, e.ap_materno, e.grupo, " +
                 $"IFNULL(a.asistio,0) AS asistio " +
                 $"FROM estudiantes e " +
                 $"LEFT JOIN asistencia a ON e.num_control = a.num_control " +
@@ -112,56 +112,87 @@ namespace Practica_3_Asistencia
             cmbGrupo.SelectedIndex = 0;
 
             cargarEstudiantes();
-            dgvAsistencia.CellValueChanged += dgvAsistencia_CellValueChanged;
-            dgvAsistencia.CurrentCellDirtyStateChanged += dgvAsistencia_CurrentCellDirtyStateChanged;
+            dgvAsistencia.CellDoubleClick += dgvAsistencia_CellDoubleClick;
+
         }
 
         private void eliminarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string nc = dgvAsistencia.CurrentRow.Cells["num_control"].Value.ToString();
-            string fecha = dtpFecha.Value.ToString("yyyy-MM-dd");
 
             if (MessageBox.Show(
-                "Deseas eliminar la asistencia del alumno: " + nc,
+                "Deseas eliminar el alumno: " + nc,
                 "Sistema",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bool f = datos.ejecutarcomando(
-                    $"DELETE FROM asistencia WHERE num_control='{nc}' AND fecha='{fecha}'");
+                    $"DELETE FROM estudiantes WHERE num_control='{nc}'");
 
                 if (f == true)
                 {
-                    MessageBox.Show("Asistencia eliminada con éxito", "Sistema");
-                    cargarEstudiantes(); // recarga la tabla
+                    MessageBox.Show("Alumno eliminado con éxito", "Sistema");
+                    cargarEstudiantes();
                 }
                 else
                 {
-                    MessageBox.Show("Error al eliminar la asistencia", "Sistema");
+                    MessageBox.Show("Error al eliminar el alumno", "Sistema");
                 }
             }
         }
 
         private void dgvAsistencia_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+           
+
+
+        }
+
+        private void dgvAsistencia_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (dgvAsistencia.IsCurrentCellDirty)
+            {
+                dgvAsistencia.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
+        private void dgvAsistencia_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
             if (e.RowIndex < 0)
                 return;
 
-            if (dgvAsistencia.Columns[e.ColumnIndex].Name == "asistio")
-            {
-                string nc = dgvAsistencia.Rows[e.RowIndex].Cells["num_control"].Value.ToString();
-                string fecha = dtpFecha.Value.ToString("yyyy-MM-dd");
+            FrmAgregar frm = new FrmAgregar(
+                dgvAsistencia.Rows[e.RowIndex].Cells["num_control"].Value.ToString(),
+                dgvAsistencia.Rows[e.RowIndex].Cells["nombre"].Value.ToString(),
+                dgvAsistencia.Rows[e.RowIndex].Cells["ap_paterno"].Value.ToString(),
+                dgvAsistencia.Rows[e.RowIndex].Cells["ap_materno"].Value.ToString(),
+                dgvAsistencia.Rows[e.RowIndex].Cells["grupo"].Value.ToString()
+            );
 
-                bool asistio;
+            frm.ShowDialog();
+
+            cargarEstudiantes();
+        }
+
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            string fecha = dtpFecha.Value.ToString("yyyy-MM-dd");
+
+            for (int i = 0; i < dgvAsistencia.Rows.Count; i++)
+            {
+              
+                if (dgvAsistencia.Rows[i].Cells["num_control"].Value == null)
+                {
+                    continue;
+                }
+
+                string nc = dgvAsistencia.Rows[i].Cells["num_control"].Value.ToString();
+
+                bool asistio = false;
                 int valor;
 
-                object v = dgvAsistencia.Rows[e.RowIndex].Cells["asistio"].Value;
+                object v = dgvAsistencia.Rows[i].Cells["asistio"].Value;
 
-                if (v == null || v == DBNull.Value)
-                {
-                    asistio = false;
-                }
-                else
+                if (v != null && v != DBNull.Value)
                 {
                     asistio = Convert.ToBoolean(v);
                 }
@@ -189,17 +220,12 @@ namespace Practica_3_Asistencia
                         $"INSERT INTO asistencia (num_control,fecha,asistio) VALUES ('{nc}','{fecha}',{valor})");
                 }
             }
+
+            MessageBox.Show("Asistencia guardada correctamente");
+        }
+
+            
         
-
-        }
-
-        private void dgvAsistencia_CurrentCellDirtyStateChanged(object sender, EventArgs e)
-        {
-            if (dgvAsistencia.IsCurrentCellDirty)
-            {
-                dgvAsistencia.CommitEdit(DataGridViewDataErrorContexts.Commit);
-            }
-        }
     }
 }
 
